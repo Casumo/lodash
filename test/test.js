@@ -3363,14 +3363,6 @@
       assert.strictEqual(cond({ 'a': 1 }), undefined);
     });
 
-    QUnit.test('should throw a TypeError if `pairs` is not composed of functions', function(assert) {
-      assert.expect(2);
-
-      lodashStable.each([false, true], function(value) {
-        assert.raises(function() { _.cond([[stubTrue, value]])(); }, TypeError);
-      });
-    });
-
     QUnit.test('should use `this` binding of function for `pairs`', function(assert) {
       assert.expect(1);
 
