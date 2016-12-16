@@ -3385,6 +3385,79 @@
 
   /*--------------------------------------------------------------------------*/
 
+  QUnit.module('lodash.condBranch');
+
+  (function() {
+    QUnit.test('should create a conditional function', function(assert) {
+      assert.expect(2);
+
+      var cond = _.condBranch(
+        lodashStable.property('c'),
+        lodashStable.property('t'),
+        lodashStable.property('f')
+      );
+
+      assert.strictEqual(cond({ 'c':  true, 't': 1, 'f': 2 }), 1);
+      assert.strictEqual(cond({ 'c':  false, 't': 1, 'f': 2 }), 2);
+    });
+
+    QUnit.test('should pass all arguments and `this` context', function(assert) {
+      assert.expect(3);
+
+      var cond = _.condBranch(
+        function (a, b) {
+          return this.c && a.c && b.c;
+        },
+        function (a, b) {
+          return [this.t, a.t, b.t];
+        },
+        function (a, b) {
+          return [this.f, a.f, b.f];
+        }
+      );
+
+      assert.deepEqual(
+        cond.call(
+          { 'c':  true, 't': 1, 'f': 2 },
+          { 'c':  true, 't': 3, 'f': 4 },
+          { 'c':  true, 't': 5, 'f': 6 }
+        ),
+        [1, 3, 5]
+      );
+
+      assert.deepEqual(
+        cond.call(
+          { 'c':  false, 't': 1, 'f': 2 },
+          { 'c':  true, 't': 3, 'f': 4 },
+          { 'c':  true, 't': 5, 'f': 6 }
+        ),
+        [2, 4, 6]
+      );
+
+      assert.deepEqual(
+        cond.call(
+          { 'c':  true, 't': 1, 'f': 2 },
+          { 'c':  true, 't': 3, 'f': 4 },
+          { 'c':  false, 't': 5, 'f': 6 }
+        ),
+        [2, 4, 6]
+      );
+
+    });
+
+    QUnit.test('should accept iteratee shorthands for all args', function(assert) {
+      assert.expect(2);
+
+      var cond = _.condBranch('c', 't', 'f');
+
+      assert.strictEqual(cond({ 'c':  true, 't': 1, 'f': 2 }), 1);
+      assert.strictEqual(cond({ 'c':  false, 't': 1, 'f': 2 }), 2);
+
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
   QUnit.module('lodash.conforms');
 
   (function() {
@@ -26652,7 +26725,7 @@
     var acceptFalsey = lodashStable.difference(allMethods, rejectFalsey);
 
     QUnit.test('should accept falsey arguments', function(assert) {
-      assert.expect(316);
+      assert.expect(317);
 
       var arrays = lodashStable.map(falsey, stubArray);
 

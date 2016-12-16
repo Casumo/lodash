@@ -15311,6 +15311,47 @@
     }
 
     /**
+     * Creates a function that returns the output of a truthy or falsey function,
+     * depending on the result of a predicate. All functions are invoked with the
+     * `this` binding and arguments of the created function.
+     *
+     * @static
+     * @memberOf _
+     * @since 4.2.0
+     * @category Util
+     * @param {Function} predicate The predicate to determine function to invoke
+     * @param {Function} truthyFunc Invoked when predicate is truthy
+     * @param {Function} falseyFunc Invoked when predicate is falsey
+     * @returns {Function} Returns the conditional branch function
+     * @example
+     *
+     * var func = _.condBranch(
+     *   _.property('a'),
+     *   _.property('b'),
+     *   _.property('c')
+     * );
+     *
+     * func({ 'a': true, 'b': 'a was true', c: 'a was false' });
+     * // => 'a was true'
+     *
+     * func({ 'a': false, 'b': 'a was true', c: 'a was false' });
+     * // => 'a was false'
+     */
+    function condBranch(predicate, truthyFunc, falseyFunc) {
+
+      return baseRest(function(args) {
+
+        if (apply(getIteratee(predicate), this, args)) {
+          return apply(getIteratee(truthyFunc), this, args);
+        }
+
+        return apply(getIteratee(falseyFunc), this, args);
+
+      });
+
+    }
+
+    /**
      * Creates a function that invokes the predicate properties of `source` with
      * the corresponding property values of a given object, returning `true` if
      * all predicates return truthy, else `false`.
@@ -16507,6 +16548,7 @@
     lodash.compact = compact;
     lodash.concat = concat;
     lodash.cond = cond;
+    lodash.condBranch = condBranch;
     lodash.conforms = conforms;
     lodash.constant = constant;
     lodash.countBy = countBy;
